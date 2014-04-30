@@ -7,13 +7,13 @@ class cloudmonitoring::token {
     path        => ["/usr/local/bin", "/usr/bin/", "/bin"],
     environment => "RAXMON_RAXRC=${cloudmonitoring::raxmon::raxrc}",
     require     => Package["rackspace-monitoring-cli"],
-    unless      => "raxmon-agent-tokens-list | grep ${::fqdn}",
+    unless      => "raxmon-agent-tokens-list | grep -i ${::fqdn}",
   }
 
   # now that the token exists, write the token to a file
   $agent_token_filename = "/tmp/${::fqdn}.agent_token"
   exec { "raxmon-agent-tokens-list ${::fqdn}":
-    command     => "raxmon-agent-tokens-list | grep ${::fqdn} | sed -n 's/.*id=\\([0-9a-f]*\\.[0-9]*\\).*/\\1/p' > ${agent_token_filename}",
+    command     => "raxmon-agent-tokens-list | grep -i ${::fqdn} | sed -n 's/.*id=\\([0-9a-f]*\\.[0-9]*\\).*/\\1/p' > ${agent_token_filename}",
     path        => ["/usr/local/bin", "/usr/bin/", "/bin"],
     environment => "RAXMON_RAXRC=${cloudmonitoring::raxmon::raxrc}",
     creates     => $agent_token_filename,
@@ -34,7 +34,7 @@ class cloudmonitoring::token {
   # get the agent id for this provider
   $agent_id_filename = "/tmp/${::fqdn}.agent_id"
   exec { "create ${agent_id_filename}":
-    command     => "raxmon-entities-list | grep ${::fqdn} | sed -n 's/.*id=\\([a-zA-Z0-9]*\\) .*/\\1/p' > ${agent_id_filename}",
+    command     => "raxmon-entities-list | grep -i ${::fqdn} | sed -n 's/.*id=\\([a-zA-Z0-9]*\\) .*/\\1/p' > ${agent_id_filename}",
     path        => ["/usr/local/bin", "/usr/bin/", "/bin"],
     environment => "RAXMON_RAXRC=${cloudmonitoring::raxmon::raxrc}",
     creates     => $agent_id_filename,
